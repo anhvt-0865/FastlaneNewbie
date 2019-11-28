@@ -1,0 +1,172 @@
+# Customise this file, documentation can be found here:
+# https://github.com/fastlane/fastlane/tree/master/fastlane/docs
+# All available actions: https://docs.fastlane.tools/actions
+# can also be listed using the `fastlane actions` command
+
+# Change the syntax highlighting to Ruby
+# All lines starting with a # are ignored when running `fastlane`
+
+# If you want to automatically update fastlane if a new version is available:
+# update_fastlane
+
+# This is the minimum version number required.
+# Update this, if you use features of a newer version
+fastlane_version "2.28.3"
+
+default_platform :android
+
+platform :android do
+
+  # Crashlytics
+  # CRASHLYTICS_GROUP_ALIAS = ["name_group"]
+  CRASHLYTICS_API_TOKEN = "be88a3a617ea5ea8fd42900a9ad59ce99080d335"
+  CRASHLYTICS_BUILD_SECRET = "9ef8cd1f8bdd3a1f9e5ae33110d80677c1a70ee9b6916572b477cefeab272d8a"
+
+  before_all do
+    # ENV["SLACK_URL"] = "https://hooks.slack.com/services/..."
+    gradle(task: 'clean')
+  end
+
+  desc "Deploy Beta Fabric"
+  lane :beta do |options|
+    checkout()
+
+    config_version()
+
+    distributor = UI.input('Enter name of distributor : ')
+
+    notes = prompt(text: "Enter release notes: ")
+    dev(deploy: true, notes: notes)
+    staging(deploy: true, notes: notes)
+    release(deploy: true, notes: notes)
+
+    # TODO notify success to Slack or Chatwork
+  end
+
+  desc "Checkout build branch"
+  private_lane :checkout do
+    #ensure_git_status_clean(show_uncommitted_changes: true)
+    sh("git checkout master")
+    #sh("git pull origin master")
+    UI.important(git_branch)  end
+
+  desc "Config app version"
+  private_lane :config_version do |options|
+    version_name = android_get_version_name() 
+    version_code = android_get_version_code()
+    
+    if UI.confirm("Want to edit version name? - Currently #{version_name}") 
+	new_version_name = UI.input("What's new version name?")
+    else
+        new_version_name = version_name 
+    end
+
+    if UI.confirm("Want to edit version code? - Currently #{version_code}") 
+	new_version_code = UI.input("What's new version code?")
+    else
+	new_version_code = version_code
+    end
+
+    if new_version_name != version_name
+  	android_set_version_name(version_name: new_version_name)
+       end
+    if new_version_code != version_code
+  	android_set_version_code(version_code: new_version_code)
+       end
+
+    UI.important("Building a new app with version #{new_version_name} - code #{new_version_code}......")
+    UI.important(".................................")
+  end 
+
+  desc "Build APK debug"
+  lane :dev do |options|
+    gradle(
+      task: 'assemble',
+      flavor: 'k1',
+      build_type: 'Debug'
+    )
+
+    if options[:deploy]
+    crashlytics(
+    	api_token: CRASHLYTICS_API_TOKEN,
+    	build_secret: CRASHLYTICS_BUILD_SECRET,
+   	notes: options[:notes] 
+     )
+    end
+  end
+
+  desc "Build APK staging"
+  lane :staging do |options| 
+    gradle(
+      task: 'assemble',
+      flavor: 'k1',
+      build_type: 'Staging'
+    )
+
+    if options[:deploy]
+    crashlytics(
+   	api_token: CRASHLYTICS_API_TOKEN,
+    	build_secret: CRASHLYTICS_BUILD_SECRET,
+   	notes: options[:notes] 
+     )
+    end
+  end
+
+  desc "Build APK release"
+  lane :release do |options| 
+    gradle(
+      task: 'assemble',
+      flavor: 'k3',
+      build_type: 'Release'
+    )
+
+    if options[:deploy]
+    crashlytics(
+   	api_token: CRASHLYTICS_API_TOKEN,
+    	build_secret: CRASHLYTICS_BUILD_SECRET,
+   	notes: options[:notes] 
+     )
+    end
+  end
+
+  desc "Build APK for screenshots"
+  lane :screenshots do |options|
+    gradle(
+      task: 'assemble',
+      flavor: 'k1',
+      build_type: 'Debug'
+    )
+    gradle(
+      task: 'assemble',
+      build_type: 'AndroidTest'
+    )
+    screengrab(
+      locales: ["en-US"],
+      clear_previous_screenshots: true
+    )
+  end
+
+  # You can define as many lanes as you want
+
+  after_all do |lane|
+    # This block is called, only if the executed lane was successful
+
+    # slack(
+    #   message: "Successfully deployed new App Update."
+    # )
+  end
+
+  error do |lane, exception|
+    # slack(
+    #   message: exception.message,
+    #   success: false
+    # )
+  end
+end
+
+
+# More information about multiple platforms in fastlane: https://github.com/fastlane/fastlane/blob/master/fastlane/docs/Platforms.md
+# All available actions: https://docs.fastlane.tools/actions
+
+# fastlane reports which actions are used
+# No personal data is sent or shared. Learn more at https://github.com/fastlane/enhancer
