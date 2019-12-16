@@ -85,6 +85,9 @@ platform :android do
       flavor: 'k1',
       build_type: 'Debug'
     )
+    
+    properties = property_file_read(file: "app/config/config-dev.properties")
+    UI.message("VERSION from property file is " + properties["admob"])
 
     if options[:deploy]
     crashlytics(

@@ -1,6 +1,7 @@
 package com.example.testify;
 
 import android.os.Bundle;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,5 +16,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
+        TextView textView = findViewById(R.id.text1);
+        textView.setText(BuildConfig.BASE_URL);
+        TextView textView2 = findViewById(R.id.text2);
+        textView2.setText(BuildConfig.ADMOB_ID);
     }
 }

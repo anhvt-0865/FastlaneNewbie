@@ -21,6 +21,7 @@ repositories {
 }
 
 android {
+
     signingConfigs {
         deploy {
             storeFile file('test.keystore')
@@ -35,8 +36,8 @@ android {
         applicationId "com.example.testify"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 150
-        versionName "2.0.0"
+        versionCode 200
+        versionName "3.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         applicationVariants.all { variant ->
@@ -48,8 +49,34 @@ android {
                 }
             }
         }
+
+        applicationVariants.all { variant ->
+            def flavor = variant.productFlavors[0].name
+            def buildType = variant.buildType.name
+
+//            if( flavor == "Demo") {
+//                buildConfigField "String", "PRODUCT_IDENTIFIER", "\"identifier_DEMO\""
+//            }
+//            else if( flavor == "Test") {
+//                buildConfigField "String", "PRODUCT_IDENTIFIER", "\"identifier_TEST\""
+//            }
+            Properties configPros = new Properties()
+
+            if (buildType == "debug") {
+                file("config/config-dev.properties").withInputStream { configPros.load(it) }
+            } else {
+                file("config/config-stg.properties").withInputStream { configPros.load(it) }
+            }
+
+            def url = configPros['url']
+            def admob = configPros['admob']
+
+            variant.buildConfigField "String", "BASE_URL", "$url"
+            variant.buildConfigField "String", "ADMOB_ID", "$admob"
+        }
     }
     buildTypes {
+
         debug {
             debuggable true
             applicationIdSuffix ".dev"

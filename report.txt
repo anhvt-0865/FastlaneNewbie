@@ -1,0 +1,107 @@
+[16:43:59]: [33mfastlane detected a Gemfile in the current directory[0m
+[16:43:59]: [33mHowever, it seems like you didn't use `bundle exec`[0m
+[16:43:59]: [33mTo launch fastlane faster, please use[0m
+[16:43:59]: 
+[16:43:59]: [36m$ bundle exec fastlane beta[0m
+[16:43:59]: 
+[16:43:59]: [33mGet started using a Gemfile for fastlane https://docs.fastlane.tools/getting-started/ios/setup/#use-a-gemfile[0m
++------------------------------------+---------+-----------------------------------------------------------------------------+
+|                                                        [32mUsed plugins[0m                                                        |
++------------------------------------+---------+-----------------------------------------------------------------------------+
+| Plugin                             | Version | Action                                                                      |
++------------------------------------+---------+-----------------------------------------------------------------------------+
+| fastlane-plugin-versioning_android | 0.1.0   | android_get_version_name android_set_version_code android_set_version_name  |
+|                                    |         | android_get_version_code                                                    |
++------------------------------------+---------+-----------------------------------------------------------------------------+
+
+[16:44:01]: [32m----------------------------------------[0m
+[16:44:01]: [32m--- Step: Verifying fastlane version ---[0m
+[16:44:01]: [32m----------------------------------------[0m
+[16:44:01]: Your fastlane version 2.137.0 matches the minimum requirement of 2.28.3  ✅
+[16:44:01]: [32m------------------------------[0m
+[16:44:01]: [32m--- Step: default_platform ---[0m
+[16:44:01]: [32m------------------------------[0m
+[16:44:01]: [32mDriving the lane 'android beta' 🚀[0m
+[16:44:01]: [32m--------------------[0m
+[16:44:01]: [32m--- Step: gradle ---[0m
+[16:44:01]: [32m--------------------[0m
+[16:44:01]: [36m$ /Users/vo.the.anh/Desktop/Projects/Testify/gradlew clean -p .[0m
+[16:44:02]: ▸ [35m> Task :clean UP-TO-DATE[0m
+[16:44:02]: ▸ [35m> Task :app:clean[0m
+[16:44:02]: ▸ [35mBUILD SUCCESSFUL in 0s[0m
+[16:44:02]: ▸ [35m2 actionable tasks: 1 executed, 1 up-to-date[0m
+[16:44:02]: [32m---------------------------------------------[0m
+[16:44:02]: [32m--- Step: Switch to android checkout lane ---[0m
+[16:44:02]: [32m---------------------------------------------[0m
+[16:44:02]: Cruising over to lane 'android checkout' 🚖
+[16:44:02]: [32m---------------------------------[0m
+[16:44:02]: [32m--- Step: git checkout master ---[0m
+[16:44:02]: [32m---------------------------------[0m
+[16:44:02]: [36m$ git checkout master[0m
+[16:44:02]: ▸ [35mAlready on 'master'[0m
+[16:44:02]: ▸ [35mM	app/build.gradle[0m
+[16:44:02]: ▸ [35mM	fastlane/report.xml[0m
+[16:44:02]: [32m------------------------[0m
+[16:44:02]: [32m--- Step: git_branch ---[0m
+[16:44:02]: [32m------------------------[0m
+[16:44:02]: [33mmaster[0m
+[16:44:02]: Cruising back to lane 'android beta' 🚘
+[16:44:02]: [32m---------------------------------------------------[0m
+[16:44:02]: [32m--- Step: Switch to android config_version lane ---[0m
+[16:44:02]: [32m---------------------------------------------------[0m
+[16:44:02]: Cruising over to lane 'android config_version' 🚖
+[16:44:02]: [32m--------------------------------------[0m
+[16:44:02]: [32m--- Step: android_get_version_name ---[0m
+[16:44:02]: [32m--------------------------------------[0m
+[16:44:02]: [32m👍  Current Android Version Name is: 3.0.0[0m
+[16:44:02]: [32m--------------------------------------[0m
+[16:44:02]: [32m--- Step: android_get_version_code ---[0m
+[16:44:02]: [32m--------------------------------------[0m
+[16:44:02]: [32m👍  Current Android Version Code is: 200[0m
+[16:44:02]: [33mWant to edit version name? - Currently 3.0.0[0m
++----------------------+--------------+
+|            [33mLane Context[0m             |
++----------------------+--------------+
+| DEFAULT_PLATFORM     | android      |
+| PLATFORM_NAME        | android      |
+| LANE_NAME            | android beta |
+| ANDROID_VERSION_NAME | 3.0.0        |
+| ANDROID_VERSION_CODE | 200          |
++----------------------+--------------+
+[16:44:02]: [31mCould not retrieve response as fastlane runs in non-interactive mode[0m
+
++------+---------------------------------------+-------------+
+|                      [32mfastlane summary[0m                      |
++------+---------------------------------------+-------------+
+| Step | Action                                | Time (in s) |
++------+---------------------------------------+-------------+
+| 1    | Verifying fastlane version            | 0           |
+| 2    | default_platform                      | 0           |
+| 3    | gradle                                | 1           |
+| 4    | Switch to android checkout lane       | 0           |
+| 5    | git checkout master                   | 0           |
+| 6    | git_branch                            | 0           |
+| 7    | Switch to android config_version lane | 0           |
+| 8    | android_get_version_name              | 0           |
+| 9    | android_get_version_code              | 0           |
++------+---------------------------------------+-------------+
+
+[16:44:02]: [31mfastlane finished with errors[0m
+
+Looking for related GitHub issues on fastlane/fastlane...
+
+➡️  [33mCould not retrieve response as fastlane runs in non-interactive mode[0m
+    https://github.com/fastlane/fastlane/issues/15548 [[31mopen[0m] 6 💬
+    2 weeks ago
+
+➡️  [33mMatch with Google Cloud: Impossible to run in noninteractive mode (CI)[0m
+    https://github.com/fastlane/fastlane/issues/15426 [[32mclosed[0m] 3 💬
+    a week ago
+
+➡️  [33mCircleCI: Could not find fastlane in current directory.[0m
+    https://github.com/fastlane/fastlane/issues/15341 [[32mclosed[0m] 7 💬
+    4 weeks ago
+
+and 43 more at: https://github.com/fastlane/fastlane/search?q=Could%20not%20retrieve%20response%20as%20fastlane%20runs%20in%20non-interactive%20mode&type=Issues&utf8=✓
+
+🔗  You can ⌘ + double-click on links to open them directly in your browser.
