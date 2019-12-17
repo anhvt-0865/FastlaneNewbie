@@ -41,6 +41,8 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         applicationVariants.all { variant ->
+
+            // Change apk name
             variant.outputs.all { output ->
                 if (outputFileName?.endsWith('.apk')) {
                     def appName = "Testify"
@@ -48,31 +50,31 @@ android {
                     outputFileName = newName
                 }
             }
-        }
 
-        applicationVariants.all { variant ->
-            def flavor = variant.productFlavors[0].name
-            def buildType = variant.buildType.name
-
-//            if( flavor == "Demo") {
-//                buildConfigField "String", "PRODUCT_IDENTIFIER", "\"identifier_DEMO\""
-//            }
-//            else if( flavor == "Test") {
-//                buildConfigField "String", "PRODUCT_IDENTIFIER", "\"identifier_TEST\""
-//            }
+            // Define config
             Properties configPros = new Properties()
 
+            def buildType = variant.buildType.name
+
             if (buildType == "debug") {
-                file("config/config-dev.properties").withInputStream { configPros.load(it) }
+                file("../config/config-dev.properties").withInputStream { configPros.load(it) }
             } else {
-                file("config/config-stg.properties").withInputStream { configPros.load(it) }
+                file("../config/config-stg.properties").withInputStream { configPros.load(it) }
+            }
+
+            def flavor = variant.productFlavors[0].name
+
+            if (flavor == "k1") {
+                buildConfigField "String", "PRODUCT_IDENTIFIER", "\"identifier_DEMO\""
+            } else if (flavor == "k3") {
+                buildConfigField "String", "PRODUCT_IDENTIFIER", "\"identifier_TEST\""
             }
 
             def url = configPros['url']
             def admob = configPros['admob']
 
-            variant.buildConfigField "String", "BASE_URL", "$url"
-            variant.buildConfigField "String", "ADMOB_ID", "$admob"
+            buildConfigField "String", "BASE_URL", "$url"
+            buildConfigField "String", "ADMOB_ID", "$admob"
         }
     }
     buildTypes {
@@ -138,7 +140,7 @@ def incrementVersionNumber(def type = "code") {
     } else if (type == 'minor') {
         minor++
         fix = 0
-    }else if (type == 'fix') {
+    } else if (type == 'fix') {
         fix++
     }
 

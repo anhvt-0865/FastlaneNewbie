@@ -20,5 +20,7 @@ public class MainActivity extends AppCompatActivity {
         textView.setText(BuildConfig.BASE_URL);
         TextView textView2 = findViewById(R.id.text2);
         textView2.setText(BuildConfig.ADMOB_ID);
+        TextView textView3 = findViewById(R.id.text3);
+        textView3.setText(BuildConfig.PRODUCT_IDENTIFIER);
     }
 }

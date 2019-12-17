@@ -23,9 +23,13 @@ platform :android do
   CRASHLYTICS_BUILD_SECRET = "9ef8cd1f8bdd3a1f9e5ae33110d80677c1a70ee9b6916572b477cefeab272d8a"
 
   before_all do
-    # ENV["SLACK_URL"] = "https://hooks.slack.com/services/..."
+    ENV["SLACK_URL"] = "https://hooks.slack.com/services/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"
     gradle(task: 'clean')
   end
+
+
+
+
 
   desc "Deploy Beta Fabric"
   lane :beta do |options|
@@ -36,12 +40,16 @@ platform :android do
     distributor = UI.input('Enter name of distributor : ')
 
     notes = prompt(text: "Enter release notes: ")
-    dev(deploy: true, notes: notes)
-    staging(deploy: true, notes: notes)
-    release(deploy: true, notes: notes)
+    dev(deploy: false, notes: notes)
+    #staging(deploy: true, notes: notes)
+    #release(deploy: true, notes: notes)
 
     # TODO notify success to Slack or Chatwork
   end
+
+
+
+
 
   desc "Checkout build branch"
   private_lane :checkout do
@@ -49,6 +57,10 @@ platform :android do
     sh("git checkout master")
     #sh("git pull origin master")
     UI.important(git_branch)  end
+
+
+
+
 
   desc "Config app version"
   private_lane :config_version do |options|
@@ -78,17 +90,56 @@ platform :android do
     UI.important(".................................")
   end 
 
+
+
+
+
+  desc "Notify to slack"
+  private_lane :notify_slack do |options|
+
+path = options[:config]
+UI.message(path)
+   properties = property_file_read(file: path)
+    UI.message("BASE URL from property file is " + properties["url"])
+    UI.message("ADMOB from property file is " + properties["admob"])
+
+slack(
+  message: "App " + options[:build] + " successfully released!",
+
+  payload: {
+    "Build Date" => Time.new.to_s,
+    "Version Name" => android_get_version_name(),
+    "Version Code" => android_get_version_code(),
+    "Release notes" => options[:notes]
+
+  },
+  default_payloads: [:git_branch],
+
+  attachment_properties: { 
+    thumb_url: "https://secureservercdn.net/198.71.233.254/dc8.5e0.myftpupload.com/wp-content/uploads/2017/03/Success.jpg?time=1576174980",
+    fields: [{
+      title: "BASE_URL",
+      value: properties["url"]
+    },{
+      title: "ADMOB_ID",
+      value: properties["admob"]
+    }]
+  }
+)
+  end
+
+
+
+
+
   desc "Build APK debug"
   lane :dev do |options|
-    gradle(
-      task: 'assemble',
-      flavor: 'k1',
-      build_type: 'Debug'
-    )
+   # gradle(
+   #  task: 'assemble',
+   #   flavor: 'k1',
+   #   build_type: 'Debug'
+   # )
     
-    properties = property_file_read(file: "app/config/config-dev.properties")
-    UI.message("VERSION from property file is " + properties["admob"])
-
     if options[:deploy]
     crashlytics(
     	api_token: CRASHLYTICS_API_TOKEN,
@@ -96,6 +147,8 @@ platform :android do
    	notes: options[:notes] 
      )
     end
+
+   notify_slack(config: "config/config-dev.properties", build: "Debug", notes: options[:notes])
   end
 
   desc "Build APK staging"
@@ -113,6 +166,7 @@ platform :android do
    	notes: options[:notes] 
      )
     end
+    notify_slack(config: "config/config-stg.properties", build: "Staging", notes: options[:notes])
   end
 
   desc "Build APK release"
